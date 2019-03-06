@@ -1,0 +1,8 @@
+/* This file is for your main application css. */
+
+.help-block {
+  color: red;
+  text-transform: capitalize;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
