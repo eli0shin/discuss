@@ -4,7 +4,7 @@ defmodule Discuss.TopicController do
 
   def index(conn, _params) do
     topics = Repo.all(Topic)
-
+    IO.inspect(conn.assigns)
     render(conn, "index.html", topics: topics)
   end
 
