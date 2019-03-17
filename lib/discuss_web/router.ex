@@ -1,5 +1,5 @@
-defmodule Discuss.Router do
-  use Discuss.Web, :router
+defmodule DiscussWeb.Router do
+  use DiscussWeb, :router
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -7,16 +7,16 @@ defmodule Discuss.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug(Discuss.Plugs.SetUser)
+    plug(DiscussWeb.Plugs.SetUser)
   end
 
-  scope "/", Discuss do
+  scope "/", DiscussWeb do
     pipe_through(:browser)
 
     resources("/", TopicController)
   end
 
-  scope "/auth", Discuss do
+  scope "/auth", DiscussWeb do
     pipe_through(:browser)
 
     get("/signout", AuthController, :signout)

@@ -1,12 +1,12 @@
-defmodule Discuss.UserSocket do
+defmodule DiscussWeb.UserSocket do
   use Phoenix.Socket
 
-  channel("comments:*", Discuss.CommentsChannel)
+  channel("comments:*", DiscussWeb.CommentsChannel)
 
   transport(:websocket, Phoenix.Transports.WebSocket)
 
   def connect(%{"token" => token}, socket) do
-    case Phoenix.Token.verify(socket, "key", token) do
+    case Phoenix.Token.verify(socket, "key", token, max_age: 86400) do
       {:ok, user_id} ->
         {
           :ok,

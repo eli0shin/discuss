@@ -1,4 +1,4 @@
-defmodule Discuss.ChannelCase do
+defmodule DiscussWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -25,9 +25,8 @@ defmodule Discuss.ChannelCase do
       import Ecto.Changeset
       import Ecto.Query
 
-
       # The default endpoint for testing
-      @endpoint Discuss.Endpoint
+      @endpoint DiscussWeb.Endpoint
     end
   end
 

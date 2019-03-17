@@ -1,5 +1,5 @@
-defmodule Discuss.AuthController do
-  use Discuss.Web, :controller
+defmodule DiscussWeb.AuthController do
+  use DiscussWeb, :controller
   plug(Ueberauth)
 
   alias Discuss.User

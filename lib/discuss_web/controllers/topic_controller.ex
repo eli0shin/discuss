@@ -1,4 +1,4 @@
-defmodule Discuss.TopicController do
+defmodule DiscussWeb.TopicController do
   use DiscussWeb, :controller
   alias Discuss.Topic
 
