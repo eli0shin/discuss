@@ -1,62 +1,59 @@
-// NOTE: The contents of this file will only be executed if
-// you uncomment its entry in "web/static/js/app.js".
+import { Socket } from "phoenix";
 
-// To use Phoenix channels, the first step is to import Socket
-// and connect at the socket path in "lib/my_app/endpoint.ex":
-import {Socket} from "phoenix"
+let socket = new Socket("/socket", { params: { token: window.userToken } });
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+socket.connect();
 
-// When you connect, you'll often need to authenticate the client.
-// For example, imagine you have an authentication plug, `MyAuth`,
-// which authenticates the session and assigns a `:current_user`.
-// If the current user exists you can assign the user's token in
-// the connection for use in the layout.
-//
-// In your "web/router.ex":
-//
-//     pipeline :browser do
-//       ...
-//       plug MyAuth
-//       plug :put_user_token
-//     end
-//
-//     defp put_user_token(conn, _) do
-//       if current_user = conn.assigns[:current_user] do
-//         token = Phoenix.Token.sign(conn, "user socket", current_user.id)
-//         assign(conn, :user_token, token)
-//       else
-//         conn
-//       end
-//     end
-//
-// Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "web/templates/layout/app.html.eex":
-//
-//     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
-//
-// You will need to verify the user token in the "connect/2" function
-// in "web/channels/user_socket.ex":
-//
-//     def connect(%{"token" => token}, socket) do
-//       # max_age: 1209600 is equivalent to two weeks in seconds
-//       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
-//         {:ok, user_id} ->
-//           {:ok, assign(socket, :user, user_id)}
-//         {:error, reason} ->
-//           :error
-//       end
-//     end
-//
-// Finally, pass the token on connect as below. Or remove it
-// from connect if you don't care about authentication.
+const createSocket = topicId => {
+  const channel = socket.channel(`comments:${topicId}`, {});
+  channel
+    .join()
+    .receive("ok", res => {
+      const { comments } = res;
+      renderComments(comments);
+    })
+    .receive("error", res => {
+      console.log("Unable to join", res);
+    });
 
-socket.connect()
+  channel.on(`comments:${topicId}:new`, renderComment);
 
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+  document.getElementById("add-comment").addEventListener("click", () => {
+    const commentBox = document.getElementById("comment-textarea");
 
-export default socket
+    const comment = commentBox.value;
+
+    if (comment.length < 1) return;
+
+    channel.push("comment:add", { content: comment });
+
+    commentBox.value = "";
+  });
+};
+
+function renderComments(comments) {
+  if (!Array.isArray(comments) || comments.length < 1) return;
+
+  const renderedComments = comments.map(comment => {
+    return commentTemplate(comment);
+  });
+
+  document.querySelector(".collection").innerHTML = renderedComments.join(" ");
+}
+
+function renderComment({ comment }) {
+  const renderedComment = commentTemplate(comment);
+
+  document.querySelector(".collection").innerHTML += renderedComment;
+}
+
+function commentTemplate(comment) {
+  return `
+    <li class="collection-item">
+      <div class="secondary-content">${comment.user.email}</div>
+      <div>${comment.content}</div>
+    </li>
+  `;
+}
+
+window.createSocket = createSocket;
