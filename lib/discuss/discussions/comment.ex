@@ -1,5 +1,7 @@
 defmodule Discuss.Comment do
-  use DiscussWeb, :model
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias Discuss.Comment
 
   @derive {Poison.Encoder, only: [:content, :id, :user]}
 
@@ -11,8 +13,8 @@ defmodule Discuss.Comment do
     timestamps()
   end
 
-  def changeset(struct, params \\ %{}) do
-    struct
+  def changeset(%Comment{} = user, params \\ %{}) do
+    user
     |> cast(params, [:content])
     |> validate_required([:content])
   end
