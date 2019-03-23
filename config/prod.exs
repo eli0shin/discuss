@@ -29,6 +29,10 @@ config :discuss, Discuss.Repo,
   database: "discuss_prod",
   pool_size: 20
 
+config :ueberauth, Ueberauth.Strategy.Github.OAuth,
+  client_id: Map.fetch!(System.get_env(), "AUTH_CLIENT_ID"),
+  client_secret: Map.fetch!(System.get_env(), "AUTH_CLIENT_SECRET")
+
 # Do not print debug messages in production
 config :logger, level: :info
 
