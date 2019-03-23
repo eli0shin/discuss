@@ -1,7 +1,7 @@
-defmodule DiscussWeb.Plugs.RequireAuth do
+defmodule Discuss.Web.Plugs.RequireAuth do
   import Plug.Conn
   import Phoenix.Controller
-  alias DiscussWeb.Router.Helpers
+  alias Discuss.Web.Router.Helpers
 
   def init(_params) do
   end

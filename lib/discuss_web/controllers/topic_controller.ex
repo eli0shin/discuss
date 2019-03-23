@@ -1,14 +1,13 @@
-defmodule DiscussWeb.TopicController do
-  use DiscussWeb, :controller
-  alias Discuss.Topic
+defmodule Discuss.Web.TopicController do
+  use Discuss.Web, :controller
+  alias Discuss.Topics
+  alias Discuss.Topics.Topic
 
-  plug(DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete])
+  plug(Discuss.Web.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete])
   plug(:check_topic_owner when action in [:update, :edit, :delete])
 
   def index(conn, _params) do
-    topics = Repo.all(Topic)
-
-    render(conn, "index.html", topics: topics)
+    render(conn, "index.html", topics: Topics.list())
   end
 
   def new(conn, _params) do
@@ -22,12 +21,7 @@ defmodule DiscussWeb.TopicController do
   end
 
   def create(conn, %{"topic" => topic}) do
-    changeset =
-      conn.assigns.user
-      |> build_assoc(:topics)
-      |> Topic.changeset(topic)
-
-    case Repo.insert(changeset) do
+    case Topics.create(topic, conn.assigns.user) do
       {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic Created")
@@ -48,10 +42,7 @@ defmodule DiscussWeb.TopicController do
   end
 
   def update(conn, %{"id" => topic_id, "topic" => topic}) do
-    old_topic = Repo.get(Topic, topic_id)
-    changeset = Topic.changeset(old_topic, topic)
-
-    case Repo.update(changeset) do
+    case Topics.update(topic_id, topic) do
       {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic Updated Successfully!")
@@ -60,13 +51,12 @@ defmodule DiscussWeb.TopicController do
       {:error, changeset} ->
         conn
         |> put_flash(:error, "There was an error saving the Topic. Please try again.")
-        |> render("edit.html", changeset: changeset, topic: old_topic)
+        |> render("edit.html", changeset: changeset, topic: Topics.get!(topic_id))
     end
   end
 
   def delete(conn, %{"id" => topic_id}) do
-    Repo.get!(Topic, topic_id)
-    |> Repo.delete!()
+    Topics.delete!(topic_id)
 
     conn
     |> put_flash(:info, "Topic Deleted Successfully")
@@ -76,7 +66,7 @@ defmodule DiscussWeb.TopicController do
   defp check_topic_owner(conn, _params) do
     %{params: %{"id" => topic_id}} = conn
 
-    if Repo.get(Topic, topic_id).user_id == conn.assigns.user.id do
+    if Topics.is_owner?(topic_id, conn.assigns.user.id) do
       conn
     else
       conn
@@ -87,7 +77,6 @@ defmodule DiscussWeb.TopicController do
   end
 
   def show(conn, %{"id" => topic_id}) do
-    topic = Repo.get!(Topic, topic_id)
-    render(conn, "show.html", topic: topic)
+    render(conn, "show.html", topic: Topics.get!(topic_id))
   end
 end

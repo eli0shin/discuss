@@ -1,27 +1,13 @@
-defmodule DiscussWeb.AuthController do
-  use DiscussWeb, :controller
+defmodule Discuss.Web.AuthController do
+  use Discuss.Web, :controller
   plug(Ueberauth)
 
-  alias Discuss.User
+  alias Discuss.Users
 
   def callback(conn, %{"provider" => provider}) do
     %{assigns: %{ueberauth_auth: auth}} = conn
 
-    user_params = create_user_params(auth, provider)
-
-    changeset = User.changeset(%User{}, user_params)
-
-    signin(conn, changeset)
-  end
-
-  def signout(conn, _params) do
-    conn
-    |> configure_session(drop: true)
-    |> redirect(to: topic_path(conn, :index))
-  end
-
-  defp signin(conn, changeset) do
-    case insert_or_update_user(changeset) do
+    case Users.signin(auth, provider) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "Welcome back!")
@@ -35,21 +21,9 @@ defmodule DiscussWeb.AuthController do
     end
   end
 
-  defp create_user_params(auth, provider) do
-    %{
-      token: auth.credentials.token,
-      email: auth.info.email,
-      provider: provider
-    }
-  end
-
-  defp insert_or_update_user(changeset) do
-    case Repo.get_by(User, email: changeset.changes.email) do
-      nil ->
-        Repo.insert(changeset)
-
-      user ->
-        {:ok, user}
-    end
+  def signout(conn, _params) do
+    conn
+    |> configure_session(drop: true)
+    |> redirect(to: topic_path(conn, :index))
   end
 end

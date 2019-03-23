@@ -1,12 +1,12 @@
-defmodule DiscussWeb do
+defmodule Discuss.Web do
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.
 
   This can be used in your application as:
 
-      use DiscussWeb, :controller
-      use DiscussWeb, :view
+      use Discuss.Web, :controller
+      use Discuss.Web, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -16,32 +16,22 @@ defmodule DiscussWeb do
   below.
   """
 
-  def model do
-    quote do
-      use Ecto.Schema
-
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-    end
-  end
-
   def controller do
     quote do
-      use Phoenix.Controller, namespace: DiscussWeb
+      use Phoenix.Controller, namespace: Discuss.Web
 
       alias Discuss.Repo
       import Ecto
       import Ecto.Query
 
-      import DiscussWeb.Router.Helpers
-      import DiscussWeb.Gettext
+      import Discuss.Web.Router.Helpers
+      import Discuss.Web.Gettext
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "lib/discuss_web/templates", namespace: DiscussWeb
+      use Phoenix.View, root: "lib/discuss_web/templates", namespace: Discuss.Web
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
@@ -49,9 +39,9 @@ defmodule DiscussWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import DiscussWeb.Router.Helpers
-      import DiscussWeb.ErrorHelpers
-      import DiscussWeb.Gettext
+      import Discuss.Web.Router.Helpers
+      import Discuss.Web.ErrorHelpers
+      import Discuss.Web.Gettext
     end
   end
 
@@ -68,7 +58,7 @@ defmodule DiscussWeb do
       alias Discuss.Repo
       import Ecto
       import Ecto.Query
-      import DiscussWeb.Gettext
+      import Discuss.Web.Gettext
     end
   end
 

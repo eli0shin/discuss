@@ -1,14 +1,11 @@
-defmodule DiscussWeb.CommentsChannel do
-  use DiscussWeb, :channel
-  alias Discuss.{Comment, Topic}
+defmodule Discuss.Web.CommentsChannel do
+  use Discuss.Web, :channel
+  alias Discuss.Comments
 
   def join("comments:" <> topic_id, _params, socket) do
     topic_id = String.to_integer(topic_id)
 
-    topic =
-      Topic
-      |> Repo.get(topic_id)
-      |> Repo.preload(comments: [:user])
+    topic = Comments.get!(topic_id)
 
     {
       :ok,
@@ -21,24 +18,17 @@ defmodule DiscussWeb.CommentsChannel do
     topic = socket.assigns.topic
     user_id = socket.assigns.user_id
 
-    changeset =
-      topic
-      |> build_assoc(:comments, user_id: user_id)
-      |> Comment.changeset(%{content: content})
-
-    case Repo.insert(changeset) do
+    case Comments.create(topic, content, user_id) do
       {:ok, comment} ->
-        with_association = comment |> Repo.preload(:user)
-
         broadcast!(
           socket,
           "comments:#{socket.assigns.topic.id}:new",
-          %{comment: with_association}
+          %{comment: comment}
         )
 
         {:reply, :ok, socket}
 
-      {:error, _reason} ->
+      {:error, changeset} ->
         {:reply, {:error, %{errors: changeset}}, socket}
     end
   end
