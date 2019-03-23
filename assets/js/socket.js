@@ -22,7 +22,9 @@ const createSocket = topicId => {
   document.getElementById("comment-form").addEventListener("submit", event => {
     event.preventDefault();
 
-    const comment = document.getElementById("comment-textarea").value;
+    const commentBox = document.getElementById("comment-textarea");
+
+    const comment = commentBox.value;
 
     if (comment.length < 1) return;
 
