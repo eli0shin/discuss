@@ -1,0 +1,5 @@
+<h4><%= @topic.title %></h4>
+
+<h5>Please <%= link "Sign in with Github", to: auth_path(@conn, :request, "github") %> to view this discussion</h5>
+
+

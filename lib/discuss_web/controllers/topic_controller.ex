@@ -77,6 +77,11 @@ defmodule Discuss.Web.TopicController do
   end
 
   def show(conn, %{"id" => topic_id}) do
-    render(conn, "show.html", topic: Topics.get!(topic_id))
+    %{:user => user} = conn.assigns
+
+    case user do
+      %{:id => id} -> render(conn, "show.html", topic: Topics.get!(topic_id), user_id: id)
+      _ -> render(conn, "unauthenticated.html", topic: Topics.get!(topic_id))
+    end
   end
 end

@@ -1,12 +1,15 @@
 <h4><%= @topic.title %></h4>
 
-<div class="input-field">
-  <textarea id="comment-textarea" class="materialize-textarea"></textarea>
-  <button id="add-comment" class="btn">Add Comment</button>
-</div>
 
 <ul class="collection">
 </ul>
+
+<form id="comment-form">
+  <div class="input-field">
+    <textarea id="comment-textarea" class="materialize-textarea"></textarea>
+    <button id="add-comment" class="btn" type="submit">Add Comment</button>
+  </div>
+</form>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {

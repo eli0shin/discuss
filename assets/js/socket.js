@@ -10,6 +10,7 @@ const createSocket = topicId => {
     .join()
     .receive("ok", res => {
       const { comments } = res;
+
       renderComments(comments);
     })
     .receive("error", res => {
@@ -18,16 +19,18 @@ const createSocket = topicId => {
 
   channel.on(`comments:${topicId}:new`, renderComment);
 
-  document.getElementById("add-comment").addEventListener("click", () => {
-    const commentBox = document.getElementById("comment-textarea");
+  document.getElementById("comment-form").addEventListener("submit", event => {
+    event.preventDefault();
 
-    const comment = commentBox.value;
+    const comment = document.getElementById("comment-textarea").value;
 
     if (comment.length < 1) return;
 
     channel.push("comment:add", { content: comment });
 
     commentBox.value = "";
+
+    return false;
   });
 };
 
