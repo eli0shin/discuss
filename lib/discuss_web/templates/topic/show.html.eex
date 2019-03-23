@@ -13,7 +13,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    window.createSocket(<%= @topic.id %>)
+    if(window.userToken) window.createSocket(<%= @topic.id %>)
   })
 </script>
 
