@@ -24,10 +24,9 @@ config :discuss, Discuss.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true,
-  username: "postgres",
-  password: "postgres",
-  database: "discuss_prod",
-  pool_size: 20
+  # username: "postgres",
+  # password: "postgres",
+  # database: "discuss_prod",
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
   client_id: Map.fetch!(System.get_env(), "AUTH_CLIENT_ID"),
