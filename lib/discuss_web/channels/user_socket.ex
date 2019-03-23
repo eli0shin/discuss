@@ -3,7 +3,7 @@ defmodule Discuss.Web.UserSocket do
 
   channel("comments:*", Discuss.Web.CommentsChannel)
 
-  transport(:websocket, Phoenix.Transports.WebSocket)
+  transport(:websocket, Phoenix.Transports.WebSocket, timeout: 45_000)
 
   def connect(%{"token" => token}, socket) do
     case Phoenix.Token.verify(socket, "key", token, max_age: 86400) do
